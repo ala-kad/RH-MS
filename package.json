@@ -1,0 +1,36 @@
+{
+  "name": "rh-symdrik",
+  "version": "1.0.0",
+  "description": "web application for managing human ressources workload and holidays ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "res": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ala-kad/RH-Symdrik.git"
+  },
+  "keywords": [
+    "web",
+    "app",
+    "nodejs",
+    "react",
+    "js",
+    "mongodb",
+    "express"
+  ],
+  "author": "ala kaddechi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ala-kad/RH-Symdrik/issues"
+  },
+  "homepage": "https://github.com/ala-kad/RH-Symdrik#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "mongoose": "^6.5.2",
+    "nodemon": "^2.0.19",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.7"
+  }
+}
