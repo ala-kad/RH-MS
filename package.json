@@ -4,8 +4,8 @@
   "description": "web application for managing human ressources workload and holidays ",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "res": "nodemon server.js"
+    "start": "nodemon server.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -33,4 +33,4 @@
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.7"
   }
-}
+} 
