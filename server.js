@@ -14,6 +14,7 @@ app.use(express.json()) // if we don't use this then we win't have that data in 
 app.get('/', (req,res) => {
     res.send('Welcome to our app ! ');
 })
+// POST method : adding a new member 
 app.post('/add', (req,res) => {
     console.log('Post is working')
     data = req.body;
@@ -28,8 +29,50 @@ app.post('/add', (req,res) => {
     .catch (
         (err) => {
             console.logg (err)
-        })
+    })
     /* res.send(__dirname + './public/index.html');*/
+})
+
+// GET method: view all members 
+app.get('/getall', (req, res) => {
+    member.find()
+    .then(
+        (members)=>{
+            res.send(members)
+        }
+    )
+    .catch(
+        (err) => {
+            res.send(err)
+        }
+    )
+})
+// GET method : find a member by id
+app.get('/getbyid/:id', async (req, res) =>{
+    try{
+        myid = req.params.id;
+        membre = await member.findOne({ _id : myid })
+        res.send(membre)
+    }
+    catch(error){
+        res.send(error)
+    }
+})
+// DELETE method : delete a member by id
+app.delete('/delete/:id' , (req,res)=>{
+    id = req.params.id
+    member.findOneAndDelete({ _id:id })
+    .then (
+        (deletedMember) =>{
+            res.send(deletedMember)
+            console.log('member deleted !')
+        }
+    )
+    .catch (
+        (err) => {
+            res.send(err)
+        }
+    )
 })
 // Creating a local server on port 3000
 async function start() {
@@ -42,6 +85,22 @@ async function start() {
         console.log(error);
     }
 }
+// PUT method : update a member by id 
+app.put('/update/:id', (req,res) =>{
+    id = req.params.id
+    newMember = req.body
+    member.findByIdAndUpdate({ _id:id}, newMember )
+     .then(
+        (updatedMember) => {
+            res.send(updatedMember)
+        }
+     )
+     .catch(
+        (err) => {
+            res.send(err)
+        }
+     )
+})
 start();
 
 
