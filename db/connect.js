@@ -32,6 +32,6 @@ mongoose.connection.on("error",err =>{
     console.log("err",err)
 })
 mongoose.connection.on("connected" , (err,res) => {
-    console.log ("mongoose is connected")
+    console.log ("Connected to DataBase ! ")
 })
 module.exports = connectDB
