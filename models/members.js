@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 // Creating a a member model
-const member = mongoose.model('member', {
+const Member = mongoose.model('Member', {
     matricule : String,
     name : {
         type : String,
@@ -14,9 +14,10 @@ const member = mongoose.model('member', {
         type : String ,
         required :true,
     },
+    password : String,
     dateEntree :{ type: Date, default : Date.now , /*required : true*/},
     telNum : Number,
     adress : String
 })
-module.exports = member;
+module.exports = Member;
 // exporting member as a module 

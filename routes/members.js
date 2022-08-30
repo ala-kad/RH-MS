@@ -1,28 +1,74 @@
 const express = require('express')
 const router = express.Router()
-const member = require ('../models/members')
+const Member = require ('../models/members')
+// inporting bcrypt library
+const bcrypt = require('bcrypt')
+// importing jwt
+const jwt = require('jsonwebtoken')
 // CRUD Operations on members
 // POST method : adding a new member 
-router.post('/add', (req,res) => {
-    data = req.body;
-    console.log(data)
-    const Member = new member(data)
-    Member.save()
+// router.post('/add', (req,res) => {
+//     data = req.body;
+//     console.log(data)
+//     const member = new Member(data)
+//     Member.save()
+//     .then(
+//         (savedMember) => {
+//             res.status(200).send(savedMember)
+//             console.log('just added a new member!')
+//         }
+//     )
+//     .catch (
+//     (err) => {
+//         res.status(400).send(err)  
+//     })
+//     /* res.send(__dirname + './public/index.html');*/
+// })
+
+// POST method : login
+router.post('/register', async(req, res) =>{
+    data = req.body
+    member = new Member(data)
+    salt = bcrypt.genSaltSync(10);
+    cryptedPass = await bcrypt.hashSync(data.password, salt)
+    member.password = cryptedPass
+    member.save()
     .then(
-        (savedMember) => {
-            res.status(200).send(savedMember)
-            console.log('just added a new member!')
+        (saved) => {
+            res.status(200).send(saved)
         }
     )
-    .catch (
-    (err) => {
-        res.status(400).send(err)  
-    })
-    /* res.send(__dirname + './public/index.html');*/
+    .catch(
+        (err) => {
+            res.status(400).send(err)
+        }
+    )
 })
+
+router.post('/login', async(req,res)=>{
+    data = req.body 
+    member = await Member.findOne({ email : data.email}) 
+    if(!member) {
+        res.status(404).send('email or password invalid ')
+    }else{
+        validPass = bcrypt.compareSync(data.password, member.password)
+        if(!validPass){
+            res.status(401).send('email or password invalid')
+        }else{
+            payload = {
+                _id: member._id,
+                email: member.email,
+                name: member.name
+            }
+            token = jwt.sign(payload, '123')
+            res.status(200).send({ mytoken: token })
+        }
+    }
+})
+
 // GET method: view all members 
 router.get('/getall', (req, res) => {
-    member.find()
+    Member.find()
     .then(
         (members)=>{
             res.status(200).send(members)
@@ -38,7 +84,7 @@ router.get('/getall', (req, res) => {
 router.get('/getbyid/:id', async (req, res) =>{
     try{
         myid = req.params.id;
-        membre = await member.findOne({ _id : myid })
+        Membre = await Member.findOne({ _id : myid })
         res.status(200).send(membre)
     }
     catch(error){
@@ -48,7 +94,7 @@ router.get('/getbyid/:id', async (req, res) =>{
 // DELETE method : delete a member by id
 router.delete('/delete/:id' , (req,res)=>{
     id = req.params.id
-    member.findOneAndDelete({ _id:id })
+    Member.findOneAndDelete({ _id:id })
     .then (
         (deletedMember) =>{
             res.status(200).send(deletedMember)
@@ -65,7 +111,7 @@ router.delete('/delete/:id' , (req,res)=>{
 router.put('/update/:id', (req,res) =>{
     id = req.params.id
     newMember = req.body
-    member.findByIdAndUpdate({ _id:id}, newMember )
+    Member.findByIdAndUpdate({ _id:id}, newMember )
      .then(
         (updatedMember) => {
             res.status(200).send(updatedMember)
