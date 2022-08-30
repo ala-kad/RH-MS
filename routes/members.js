@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const Member = require ('../models/members')
+// const Member = require ('../models/members')
+// controller functions
+const {signUpMember, loginMember} = require('../controllers/membersController')
 // inporting bcrypt library
 const bcrypt = require('bcrypt')
 // importing jwt
@@ -26,45 +28,45 @@ const jwt = require('jsonwebtoken')
 // })
 
 // POST method : login
-router.post('/register', async(req, res) =>{
-    data = req.body
-    member = new Member(data)
-    salt = bcrypt.genSaltSync(10);
-    cryptedPass = await bcrypt.hashSync(data.password, salt)
-    member.password = cryptedPass
-    member.save()
-    .then(
-        (saved) => {
-            res.status(200).send(saved)
-        }
-    )
-    .catch(
-        (err) => {
-            res.status(400).send(err)
-        }
-    )
-})
-
-router.post('/login', async(req,res)=>{
-    data = req.body 
-    member = await Member.findOne({ email : data.email}) 
-    if(!member) {
-        res.status(404).send('email or password invalid ')
-    }else{
-        validPass = bcrypt.compareSync(data.password, member.password)
-        if(!validPass){
-            res.status(401).send('email or password invalid')
-        }else{
-            payload = {
-                _id: member._id,
-                email: member.email,
-                name: member.name
-            }
-            token = jwt.sign(payload, '123')
-            res.status(200).send({ mytoken: token })
-        }
-    }
-})
+router.post('/register', signUpMember)
+//     data = req.body
+//     member = new Member(data)
+//     salt = bcrypt.genSaltSync(10);
+//     cryptedPass = await bcrypt.hashSync(data.password, salt)
+//     member.password = cryptedPass
+//     member.save()
+//     .then(
+//         (saved) => {
+//             res.status(200).send(saved)
+//         }
+//     )
+//     .catch(
+//         (err) => {
+//             res.status(400).send(err)
+//         }
+//     )
+// })
+// login function 
+router.post('/login',loginMember)
+//     data = req.body 
+//     member = await Member.findOne({ email : data.email}) 
+//     if(!member) {
+//         res.status(404).send('email or password invalid ')
+//     }else{
+//         validPass = bcrypt.compareSync(data.password, member.password)
+//         if(!validPass){
+//             res.status(401).send('email or password invalid')
+//         }else{
+//             payload = {
+//                 _id: member._id,
+//                 email: member.email,
+//                 name: member.name
+//             }
+//             token = jwt.sign(payload, '123')
+//             res.status(200).send({ mytoken: token })
+//         }
+//     }
+// })
 
 // GET method: view all members 
 router.get('/getall', (req, res) => {
