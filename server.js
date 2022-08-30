@@ -21,6 +21,7 @@ app.get('/', (req,res) => {
 // http//127.0.0.1:3000/projects/
 app.use('/projects', routeProjects);
 // Using Members route
+// http//127.0.0.1:3000/members/
 app.use('/members', routeMembers);
 
 // Creating a local server on port 3000

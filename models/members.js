@@ -1,24 +1,6 @@
 const mongoose = require('mongoose');
-// import mongoose, { Schema } from 'mongoose';
-// const membersSchema = new Schema ({
-//     matricule : String,
-//     name : {
-//         type : String,
-//         // requierd : [true, 'must provide a name'], 
-//     },
-//     surname : {
-//         type : String ,
-//         // required : [true , 'must provide a surname'],
-//     },
-//     email : {
-//         type : String ,
-//         required :true,
-//     },
-//     dateEntree :{ type: Date, default : Date.now , /*required : true*/},
-//     telNum : Number,
-//     adress : String
-// })
-const member = mongoose.model('member', {
+// Creating a a member model
+const Member = mongoose.model('Member', {
     matricule : String,
     name : {
         type : String,
@@ -32,16 +14,10 @@ const member = mongoose.model('member', {
         type : String ,
         required :true,
     },
+    password : String,
     dateEntree :{ type: Date, default : Date.now , /*required : true*/},
     telNum : Number,
     adress : String
 })
-module.exports = member;
-
-// const Member = mongoose.model('Member', membersSchema, 'members' );
-// const firstMember  = new Member({matricule: 'm1',name: 'ala', surname: 'kaddechi', email: 'kaddechiala@gmail.com'});
-// firstMember.save(function(err) {
-//     if (err) return handleError(err);
-//     else
-//     console.log ('Saved ! ');
-// })
+module.exports = Member;
+// exporting member as a module 
