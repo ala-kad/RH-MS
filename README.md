@@ -1,2 +1,0 @@
-# RH-Symdrik
-Application web pour la gestion des charges des traavails pour les emplyés pour simplifier aux managers la supervision des employés sur-chargés ou sous-utilisés , aussi la gestion de la disponibilité de chacun en se basant sur leurs congés 
