@@ -1,12 +1,14 @@
 const express = require('express')
 const router = express.Router()
-// const Member = require ('../models/members')
+const Member = require ('../models/members')
 // controller functions
-const {signUpMember, loginMember} = require('../controllers/membersController')
+const {signUpMember, loginMember, getMembers, updateMember, deleteMember} = require('../controllers/membersController')
 // inporting bcrypt library
 const bcrypt = require('bcrypt')
 // importing jwt
 const jwt = require('jsonwebtoken')
+const util = require('util')
+
 // CRUD Operations on members
 // POST method : adding a new member 
 // router.post('/add', (req,res) => {
@@ -69,61 +71,23 @@ router.post('/login',loginMember)
 // })
 
 // GET method: view all members 
-router.get('/getall', (req, res) => {
-    Member.find()
-    .then(
-        (members)=>{
-            res.status(200).send(members)
-        }
-    )
-    .catch(
-        (err) => {
-            res.status(400).send(err)
-        }
-    )
-})
+router.get('/getall',getMembers) 
 // GET method : find a member by id
 router.get('/getbyid/:id', async (req, res) =>{
     try{
         myid = req.params.id;
-        Membre = await Member.findOne({ _id : myid })
-        res.status(200).send(membre)
+        Member = await Member.findOne({ _id : myid })
+        console.log(util.inspect(Member));
+
+        res.status(200).send(Member)
     }
     catch(error){
         res.status(400).send(error)
     }
 })
-// DELETE method : delete a member by id
-router.delete('/delete/:id' , (req,res)=>{
-    id = req.params.id
-    Member.findOneAndDelete({ _id:id })
-    .then (
-        (deletedMember) =>{
-            res.status(200).send(deletedMember)
-            console.log('member deleted !')
-        }
-    )
-    .catch (
-        (err) => {
-            res.status(400).send(err)
-        }
-    )
-})
 // PUT method : update a member by id 
-router.put('/update/:id', (req,res) =>{
-    id = req.params.id
-    newMember = req.body
-    Member.findByIdAndUpdate({ _id:id}, newMember )
-     .then(
-        (updatedMember) => {
-            res.status(200).send(updatedMember)
-        }
-     )
-     .catch(
-        (err) => {
-            res.status(400).send(err)
-        }
-     )
-})
+router.put('/update/:id', updateMember)
+// DELETE method : delete a member by id
+router.delete('/delete/:id' , deleteMember)
 module.exports = router 
 // exporting router

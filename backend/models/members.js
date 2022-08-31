@@ -24,7 +24,7 @@ const memberSchema = new Schema({
   adress: String,
 });
 // static signup method
-memberSchema.statics.signup = async function (email, password) {
+memberSchema.statics.signup = async function (matricule,name,surname,email, password,dateEntree,telNum,adress) {
 //   const data = req.body
   const exist = await this.findOne({ email })
   if(exist){
@@ -32,7 +32,7 @@ memberSchema.statics.signup = async function (email, password) {
   }
   const salt = bcrypt.genSaltSync(10);
   const member = bcrypt.hash(password, salt).then(hash => {
-    return this.create({ email: email, password: hash });
+    return this.create({ matricule: matricule,name: name, surname: surname, email: email, password: hash , dateEntree: dateEntree, telNum: telNum, adress :adress});
   })
   return member;
 };
