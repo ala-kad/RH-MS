@@ -28,6 +28,7 @@
   "homepage": "https://github.com/ala-kad/RH-Symdrik#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cryptr": "^6.0.3",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.2",
