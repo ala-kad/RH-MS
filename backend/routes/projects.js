@@ -23,7 +23,7 @@ router.post('/add', (req,res) => {
     /* res.send(__dirname + './public/index.html');*/
 })
 // View all projects
-router.get('/getAll', (req, res) => {
+router.get('/', (req, res) => {
     project.find()
     .then(
         (projects)=>{
@@ -37,7 +37,7 @@ router.get('/getAll', (req, res) => {
     )
 })
 // Get a project by id
-router.get('/getbyid/:id', async (req, res) =>{
+router.get('/:id', async (req, res) =>{
     try{
         id = req.params.id;
         proj = await project.findOne({ _id : id })
@@ -48,7 +48,7 @@ router.get('/getbyid/:id', async (req, res) =>{
     }
 })
 // DELETE a project by id
-router.delete('/delete/:id' , (req,res)=>{
+router.delete('/:id' , (req,res)=>{
     id = req.params.id
     project.findOneAndDelete({ _id:id })
     .then (
@@ -64,7 +64,7 @@ router.delete('/delete/:id' , (req,res)=>{
     )
 })
 // PUT method : update a project by id 
-router.put('/update/:id', (req,res) =>{
+router.put('/:id', (req,res) =>{
     id = req.params.id
     newProject = req.body
     project.findByIdAndUpdate({ _id:id }, newProject )
