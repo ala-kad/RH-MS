@@ -51,11 +51,12 @@ const addMember = async(req, res) => {
 // login function : login a registred member
 const loginMember = async (req, res ) => {
     data = req.body 
+    email = data.email 
     member = await Member.findOne({ email }) 
     if(!member) {
         res.status(404).send('email or password invalid ')
     }else{
-        validPass = bcrypt.compareSync(data.password, member.password)
+        validPass = bcrypt.compare(data.password, member.password)
         if(!validPass){
             res.status(401).send('email or password invalid')
         }else{
