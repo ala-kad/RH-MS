@@ -28,7 +28,7 @@ app.use('/members', routeMembers);
 async function start() {
     try {
         await connectDB(process.env.mongo_uri);
-        app.listen(4000, () => {
+        app.listen(process.env.port, () => {
             console.log('Server is listing on port : ', process.env.port);
         });
     } catch (error) {

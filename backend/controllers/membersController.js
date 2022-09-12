@@ -3,6 +3,7 @@ const Member = require('../models/members')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const util = require('util')
+const Cryptr = require('cryptr');
 // register & signup new member :Add
 const signUpMember = async(req, res) => {
     try{
@@ -16,11 +17,12 @@ const signUpMember = async(req, res) => {
 // login function : login a registred member
 const loginMember = async (req, res ) => {
     data = req.body 
+    email = data.email 
     member = await Member.findOne({ email }) 
     if(!member) {
         res.status(404).send('email or password invalid ')
     }else{
-        validPass = bcrypt.compareSync(data.password, member.password)
+        validPass = bcrypt.compare(data.password, member.password)
         if(!validPass){
             res.status(401).send('email or password invalid')
         }else{
