@@ -7,9 +7,9 @@ const {addProject,getProjects,updateProject,deleteProject} = require('../control
 // Add a new project
 router.post('/add', addProject)
 // View all projects
-router.get('/getAll', getProjects)
+router.get('/', (req, res) => {
 // Get a project by id
-// router.get('/getbyid/:id', async (req, res) =>{
+router.get('/:id', async (req, res) =>{
 //     try{
 //         id = req.params.id;
 //         proj = await project.findOne({ _id : id })
@@ -20,8 +20,8 @@ router.get('/getAll', getProjects)
 //     }
 // })
 // DELETE a project by id
-router.delete('/delete/:id' , deleteProject)
+router.delete('/:id' , (req,res)=>{
 // PUT method : update a project by id 
-router.put('/update/:id', updateProject)
+router.put('/:id', (req,res) =>{
 // exporting projetcs router as a module
 module.exports = router;

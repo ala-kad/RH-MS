@@ -3,17 +3,51 @@ const Member = require('../models/members')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const util = require('util')
-const Cryptr = require('cryptr');
+const mongoose = require("mongoose");
+
+// cors
+const cors = (res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+}
+
+/// clean data
+const cleanData = (data) => {
+  let member = {...data._doc};
+  member.id = member._id;
+  delete member.password;
+  delete member._id;
+  delete member.__v;
+  return member;
+}
+
 // register & signup new member :Add
-const signUpMember = async(req, res) => {
+const addMember = async(req, res) => {
     try{
-        const member = await Member.signup(req.body.matricule,req.body.name,req.body.surname,req.body.email ,req.body.password,req.body.dateEntree,req.body.telNum,req.body.adress)
+        const exist = await Member.findOne({ email:req.body.email })
+        if(exist){
+            throw Error ('Email already in use !')
+        }
+        const salt = bcrypt.genSaltSync(10);
+        const member = await bcrypt.hash(req.body.password, salt).then(hash => {
+          return Member.create({ 
+            matricule: req.body.matricule,
+            name: req.body.name, 
+            surname: req.body.surname, 
+            email: req.body.email, 
+            password: hash , 
+            dateEntree: req.body.dateEntree, 
+            telNum: req.body.telNum, 
+            adress: req.body.adress});
+        })
+      
         res.status(200).json(member)
     }catch(error){
         res.status(400).json({error: error.message})
     }
     // res.json({mssg: 'signedup and added new member !'})
 } 
+
 // login function : login a registred member
 const loginMember = async (req, res ) => {
     data = req.body 
@@ -37,12 +71,20 @@ const loginMember = async (req, res ) => {
         }
     }
 }
+
 // Function : view and get all memebers 
 const getMembers = async(req, res )=> {
     Member.find()
     .then(
         (members)=>{
-            res.status(200).send(members)
+            //res.setHeader('Access-Control-Allow-Origin', '*');
+            cors(res);
+            res.append('X-Total-Count', members.length);
+            res.append('Access-Control-Expose-Headers', 'X-Total-Count');
+            let data = members.map(item => { 
+              return cleanData(item);
+            });  
+            res.status(200).send(data)
         }
     )
     .catch(
@@ -51,25 +93,33 @@ const getMembers = async(req, res )=> {
         }
     )
 }
+
 // Function : get a member by id 
-// const getMember = async (req, res) =>{
-//     try{
-//         myid = req.params.id;
-//         Membre = await Member.findOne({ _id : myid })
-//         res.status(200).send(membre)
-//     }
-//     catch(error){
-//         res.status(400).send(error)
-//     }
-// }
+const getMember = async (req, res) =>{
+    try{
+        let id = req.params.id;
+        await Member.findOne({ _id : id }).then((data)=>{
+          let member = cleanData(data);
+          console.log(util.inspect(member));
+          cors(res);
+          res.status(200).send(member)
+        });
+    }
+    catch(error){
+        res.status(400).send(error)
+    }
+}
+
 // Update Function : update a member using his id 
 const updateMember = async (req,res) =>{
-    id = req.params.id
-    newMember = req.body
-    Member.findByIdAndUpdate({ _id:id}, newMember )
+    let id = req.params.id;
+    let newMemberData = req.body;
+    Member.findByIdAndUpdate(id, newMemberData )
      .then(
-        (Member) => {
-            res.status(200).send(Member)
+        (data) => {
+            let member = cleanData(data);
+            cors(res);
+            res.status(200).send(member)
             console.log("Member updated successfully !")
         }
      )
@@ -79,6 +129,7 @@ const updateMember = async (req,res) =>{
         }
      )
 }
+
 // Delete Function : delete a member by id 
 const deleteMember = (req,res)=>{
     id = req.params.id
@@ -95,4 +146,4 @@ const deleteMember = (req,res)=>{
         }
     )
 }
-module.exports = {signUpMember, loginMember, getMembers,updateMember, deleteMember}
+module.exports = {getMembers, addMember, getMember, updateMember, deleteMember, loginMember}
