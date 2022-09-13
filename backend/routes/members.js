@@ -7,11 +7,9 @@ const {getMembers, addMember, getMember, updateMember, deleteMember, loginMember
 const bcrypt = require('bcrypt')
 // importing jwt
 const jwt = require('jsonwebtoken')
-
+// POST method : register add a new member
 router.get('/',getMembers) 
-
 router.post('/add', addMember)
-
 // GET method : find a member by id
 router.get('/:id', getMember)
 
@@ -23,5 +21,5 @@ router.delete('/:id' , deleteMember)
 
 router.post('/login',loginMember)
 
-module.exports = router 
 // exporting router
+module.exports = router 

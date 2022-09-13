@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 // Creating a project model
-const project = mongoose.model("Project" , {
+const Project = mongoose.model("Project" , {
     title : String,
     startDate: Date,
     endDate: Date, 
-})
-module.exports = project
+}, {timestamps: true })
 // exporting project model as a module
+module.exports = Project
