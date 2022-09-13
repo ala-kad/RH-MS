@@ -26,6 +26,17 @@ const memberSchema = new Schema({
 },{timestamps: true });
 
   //     return this.create({ matricule: matricule,name: name, surname: surname, email: email, password: hash , dateEntree: dateEntree, telNum: telNum, adress :adress});
+  //     return this.create({ matricule: matricule,name: name, surname: surname, email: email, password: hash , dateEntree: dateEntree, telNum: telNum, adress :adress});
+  //   })
+  // });
+  const salt = bcrypt.genSalt(10)
+  const hash = bcrypt.hash(password, salt)
+  console.log(password)
+  console.log(salt)
+  console.log(hash)
+
+
+  // .then(hash => {
   //   })
   // });
   const salt = bcrypt.genSalt(10)
