@@ -3,10 +3,10 @@ const Project = require('../models/projects')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const util = require('util')
+
 // Add a project  function 
 const addProject = async (res, req) => {
     data = req.body;
-    console.log(data)
     const project = new Project(data)
     project.save()
     .then(

@@ -45,7 +45,6 @@ const addMember = async(req, res) => {
     }catch(error){
         res.status(400).json({error: error.message})
     }
-    // res.json({mssg: 'signedup and added new member !'})
 } 
 
 // login function : login a registred member
@@ -67,7 +66,6 @@ const loginMember = async (req, res ) => {
             }
             token = jwt.sign(payload, '123')
             res.status(200).send({ mytoken: token })
-            // res.json({msg: 'logged in member !'})
         }
     }
 }
