@@ -1,6 +1,11 @@
 // requiring and creating express app 
 const express = require('express');
 const app = express();
+
+// cors
+const cors = require('cors')
+app.use(cors())
+
 // importing route module from routes folder 
 const routeProjects = require('./routes/projects')
 // requiring member model

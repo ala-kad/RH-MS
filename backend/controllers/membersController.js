@@ -5,12 +5,6 @@ const jwt = require('jsonwebtoken')
 const util = require('util')
 const mongoose = require("mongoose");
 
-// cors
-const cors = (res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-}
-
 /// clean data
 const cleanData = (data) => {
   let member = {...data._doc};
@@ -77,8 +71,6 @@ const getMembers = async(req, res )=> {
     Member.find()
     .then(
         (members)=>{
-            //res.setHeader('Access-Control-Allow-Origin', '*');
-            cors(res);
             res.append('X-Total-Count', members.length);
             res.append('Access-Control-Expose-Headers', 'X-Total-Count');
             let data = members.map(item => { 
@@ -101,7 +93,6 @@ const getMember = async (req, res) =>{
         await Member.findOne({ _id : id }).then((data)=>{
           let member = cleanData(data);
           console.log(util.inspect(member));
-          cors(res);
           res.status(200).send(member)
         });
     }
@@ -118,7 +109,7 @@ const updateMember = async (req,res) =>{
      .then(
         (data) => {
             let member = cleanData(data);
-            cors(res);
+            console.log(util.inspect(member));
             res.status(200).send(member)
             console.log("Member updated successfully !")
         }

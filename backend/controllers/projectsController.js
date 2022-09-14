@@ -4,14 +4,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const util = require('util')
 
-
-
-// cors
-const cors = (res) => {
-res.setHeader('Access-Control-Allow-Origin', '*');
-res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-}
-
 /// clean data
 const cleanData = (data) => {
 let project = {...data._doc};
@@ -58,7 +50,6 @@ const getProject = async (req, res) =>{
         let id = req.params.id;
         await Project.findOne({ _id : id }).then((data)=>{
           let project = cleanData(data);
-          cors(res);
           res.status(200).send(project)
         });
     }
