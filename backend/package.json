@@ -4,7 +4,8 @@
   "description": "web application for managing human ressources workload and holidays ",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "set NODE_ENV=production&nodemon server.js",
+    "dev": "set NODE_ENV=development&nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,14 +29,20 @@
   "homepage": "https://github.com/ala-kad/RH-Symdrik#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "config": "^3.3.9",
     "cors": "^2.8.5",
     "cryptr": "^6.0.3",
     "express": "^4.18.1",
+    "fs": "^0.0.1-security",
+    "joi": "^17.9.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.2",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.19",
+    "path": "^0.12.7",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.7",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "validator": "^13.9.0"
   }
 }
