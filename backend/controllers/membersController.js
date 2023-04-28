@@ -1,9 +1,7 @@
-const express = require('express')
 const Member = require('../models/members')
+const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const util = require('util')
-const mongoose = require("mongoose");
 
 /// clean data
 const cleanData = (data) => {
@@ -14,10 +12,20 @@ const cleanData = (data) => {
   delete member.__v;
   return member;
 }
-
+// Create a token 
+const createToken = (_id) =>{
+    return jwt.sign({_id}, process.env.SECRET, {expiresIn: '3d'})
+}
 // register & signup new member :Add
-const addMember = async(req, res) => {
+const registerMember = async(req, res) => {
     try{
+         // Validation of req
+        if (!req.body.email || !req.body.password){
+            throw Error("All fields must be correctly filled !")
+        }
+        if(!validator.isEmail(req.body.email)){
+            throw Error("Invalid email !")
+        }
         const exist = await Member.findOne({ email:req.body.email })
         if(exist){
             throw Error ('Email already in use !')
@@ -25,44 +33,61 @@ const addMember = async(req, res) => {
         const salt = bcrypt.genSaltSync(10);
         const member = await bcrypt.hash(req.body.password, salt).then(hash => {
           return Member.create({ 
-            matricule: req.body.matricule,
-            name: req.body.name, 
-            surname: req.body.surname, 
+            username: req.body.username,
             email: req.body.email, 
-            password: hash , 
-            dateEntree: req.body.dateEntree, 
-            telNum: req.body.telNum, 
-            adress: req.body.adress});
+            password: hash ,
+            roles: req.body.roles, 
+            telNumber: req.body.telNumber
+            });
         })
-      
-        res.status(200).json(member)
+        const token = createToken(member._id)
+        res.status(200).json({email: member.email, token : token})
     }catch(error){
         res.status(400).json({error: error.message})
     }
-    // res.json({mssg: 'signedup and added new member !'})
 } 
 
 // login function : login a registred member
 const loginMember = async (req, res ) => {
-    data = req.body 
-    email = data.email 
-    member = await Member.findOne({ email }) 
-    if(!member) {
-        res.status(404).send('email or password invalid ')
-    }else{
-        validPass = bcrypt.compare(data.password, member.password)
-        if(!validPass){
-            res.status(401).send('email or password invalid')
-        }else{
-            payload = {
-                _id: member._id,
-                email: member.email,
-                name: member.name
-            }
-            token = jwt.sign(payload, '123')
-            res.status(200).send({ mytoken: token })
-            // res.json({msg: 'logged in member !'})
+    const userLoggingIn = req.body 
+    const email = userLoggingIn.email 
+    try {
+          // Validation of req
+          if (!req.body.email || !req.body.password){
+            throw Error("All fields must be correctly filled !")
         }
+        if(!validator.isEmail(req.body.email)){
+            throw Error("Invalid email !")
+        }
+        let member = await Member.findOne({ email }) 
+        if(!member) {
+            res.status(404).send('email or password invalid ')
+        }
+        else{
+            const validPass = await bcrypt.compare(userLoggingIn.password, member.password)
+            if(!validPass){
+                res.status(401).send('email or password invalid')
+            }
+            else{
+                const payload = {
+                    _id: member._id,
+                    email: member.email,
+                    name: member.name
+                }
+                jwt.sign(payload, process.env.SECRET,{expiresIn: 86400}, (err, token) => {
+                    if(err) return res.json({message: err})
+                    return res.json({
+                        message: "Success",
+                        token: "Bearer " + token
+                    })
+                })
+               
+                // token = createToken(member._id)
+                // res.status(200).json({email: member.email, token : token})
+            }
+        }
+    }catch(error){
+        res.status(500).json({error : error.message})
     }
 }
 
@@ -92,49 +117,37 @@ const getMember = async (req, res) =>{
         let id = req.params.id;
         await Member.findOne({ _id : id }).then((data)=>{
           let member = cleanData(data);
-          console.log(util.inspect(member));
-          res.status(200).send(member)
+          res.status(200).json({member: member})
         });
     }
     catch(error){
-        res.status(400).send(error)
+        res.status(404).send(`Member with id: ${id} not found`)
     }
 }
 
 // Update Function : update a member using his id 
-const updateMember = async (req,res) =>{
+const updateMember = async (req,res) => {
     let id = req.params.id;
     let newMemberData = req.body;
-    Member.findByIdAndUpdate(id, newMemberData )
-     .then(
-        (data) => {
-            let member = cleanData(data);
-            console.log(util.inspect(member));
-            res.status(200).send(member)
-            console.log("Member updated successfully !")
-        }
-     )
-     .catch(
-        (err) => {
-            res.status(400).send(err)
-        }
-     )
+    delete newMemberData.id;
+    delete newMemberData.updatedAt;
+    try {
+        let memDB = await Member.findByIdAndUpdate(id,newMemberData);
+        memDB.id=memDB._id;
+        return res.status(203).json({newMember: newMemberData});
+       
+    } catch (error) {
+        res.status(404).send(`Member with id ${id} was not found `);
+    }
 }
 
 // Delete Function : delete a member by id 
-const deleteMember = (req,res)=>{
-    id = req.params.id
-    Member.findOneAndDelete({ _id:id })
-    .then (
-        (deletedMember) =>{
-            res.status(200).send(deletedMember)
-            console.log('member deleted !')
-        }
-    )
-    .catch (
-        (err) => {
-            res.status(400).send(err)
-        }
-    )
+const deleteMember =  async (req,res) => {
+    try{
+        await Member.findByIdAndDelete(req.params.id)
+    }catch(err) {
+        res.status(404).send(`Member with id ${id} not found !`)
+    }
+    
 }
-module.exports = {getMembers, addMember, getMember, updateMember, deleteMember, loginMember}
+module.exports = {getMembers, registerMember, getMember, updateMember, deleteMember, loginMember}
